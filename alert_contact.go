@@ -57,7 +57,7 @@ type NewAlertContactParams struct {
 // EditAlertContactParams are parameters for EditAlertContact.
 type EditAlertContactParams struct {
 	Id           int     `url:"id"`
-	Value        *int    `url:"value,omitempty"`
+	Value        *string `url:"value,omitempty"`
 	FriendlyName *string `url:"friendly_name,omitempty"`
 }
 
