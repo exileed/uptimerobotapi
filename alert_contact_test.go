@@ -22,7 +22,7 @@ func TestGetAlertContacts(t *testing.T) {
   					"total": 1,
   					"alert_contacts": [
     					{
-      						"id": "993765",
+      						"id": "093765",
       						"friendly_name": "John Doe",
       						"type": 2,
       						"status": 1,
@@ -38,7 +38,7 @@ func TestGetAlertContacts(t *testing.T) {
 
 	require.NoError(t, err)
 
-	alertContact := []AlertContact{{Id: "993765", FriendlyName: "John Doe", Type: 2, Status: 1, Value: "johndoe@gmail.com"}}
+	alertContact := []AlertContact{{Id: "093765", FriendlyName: "John Doe", Type: 2, Status: 1, Value: "johndoe@gmail.com"}}
 
 	want := &AlertContactResp{Stat: StatOk, Limit: 50, Offset: 0, Total: 1, AlertContacts: alertContact}
 

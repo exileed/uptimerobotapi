@@ -1,4 +1,5 @@
-# uptimerobotapi [![Build Status](https://github.com/exileed/uptimerobotapi/workflows/test/badge.svg)](https://github.com/exileed/uptimerobotapi/actions) [![Go Reference](https://pkg.go.dev/badge/github.com/exileed/uptimerobotapi.svg)](https://pkg.go.dev/github.com/exileed/uptimerobotapi)
+# uptimerobotapi [![Build Status](https://github.com/exileed/uptimerobotapi/workflows/test/badge.svg)](https://github.com/exileed/uptimerobotapi/actions) [![Go Reference](https://pkg.go.dev/badge/github.com/exileed/uptimerobotapi.svg)](https://pkg.go.dev/github.com/exileed/uptimerobotapi) [![Go Report Card](https://goreportcard.com/badge/github.com/exileed/uptimerobotapi)](https://goreportcard.com/report/github.com/exileed/uptimerobotapi)
+
 
 A Go client for [UptimeRobot API](https://uptimerobot.com/api/).
 
@@ -44,3 +45,41 @@ func main() {
 	...
 }
 ```
+
+
+#### API Error Responses
+
+For cases where your request results in an error from the API, you can use the
+`errors.As()` function from the standard library to extract the
+`uptimerobotapi.APIError` error value and inspect more details about the error,
+including the HTTP response code and UptimeRobot API Error Code.
+
+```go
+package main
+
+import (
+	"fmt"
+	
+	"github.com/exileed/uptimerobotapi"
+)
+
+
+func main() {
+	client := uptimerobotapi.NewClient("")
+	account, err := client.Account.GetAccountDetails()
+	var apiErr uptimerobotapi.APIError
+		
+	
+		if errors.As(err, &apiErr){
+			if apiErr.RateLimited() {
+				fmt.Println("rate limited")
+				return
+			}
+
+			fmt.Println("unknown status code:", apiErr.StatusCode)
+		}
+
+		panic(err)
+	}
+	fmt.Println(account)
+}

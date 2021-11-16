@@ -1,11 +1,28 @@
 package uptimerobotapi
 
 import (
+	"fmt"
+	"github.com/stretchr/testify/require"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"testing"
 )
+
+func TestClientError(t *testing.T) {
+	mux, server, client := setup(t)
+	defer teardown(server)
+
+	mux.HandleFunc("/v2/getAccountDetails", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, http.MethodPost)
+		w.WriteHeader(http.StatusTooManyRequests)
+		fmt.Fprintf(w, `Rate limit exceeded, retry in 11 seconds`)
+	})
+
+	_, err := client.Account.GetAccountDetails()
+
+	require.Error(t, err)
+}
 
 // setup sets up a test HTTP server along with a uptimerobotapi.Client that is
 // configured to talk to that test server.  Tests should register handlers on

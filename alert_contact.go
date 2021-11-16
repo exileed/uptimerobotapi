@@ -14,10 +14,8 @@ type AlertContactSingleResp struct {
 }
 
 type AlertContactEditResp struct {
-	Stat         string `json:"stat"`
-	AlertContact struct {
-		Id int `json:"id"`
-	} `json:"alertcontact"`
+	Stat         string             `json:"stat"`
+	AlertContact AlertContactSingle `json:"alertcontact"`
 }
 
 type AlertContactSingle struct {

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/go-querystring/query"
-	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -20,10 +19,7 @@ const (
 	apiVersion = "v2"
 
 	// apiVersion default user agent of the  UptimeRobot API.
-	defaultUserAgent = "go-uptimerobotapi" //@todo
-
-	headerRateLimit = "X-RateLimit-Limit" //@todo
-	headerRateReset = "X-RateLimit-Reset" //@todo
+	defaultUserAgent = "go-uptimerobotapi"
 )
 
 // ClientConfig specifies configuration with which to initialize a UptimeRobot API
@@ -36,8 +32,8 @@ type ClientConfig struct {
 	// parameter-less `&http.Client{}`, resulting in default everything.
 	HTTPClient *http.Client
 
-	// userAgent User agent used when communicating with the UptimeRobot API.
-	userAgent *string
+	// UserAgent User agent used when communicating with the UptimeRobot API.
+	UserAgent *string
 }
 
 // A Client manages communication with the UptimeRobot API.
@@ -91,6 +87,14 @@ func newClient(config *ClientConfig) *Client {
 		httpClient = config.HTTPClient
 	}
 
+	var userAgent string
+
+	if config.UserAgent == nil {
+		userAgent = defaultUserAgent
+	} else {
+		userAgent = *config.UserAgent
+	}
+
 	apiUrl, err := url.Parse(defaultBaseURL)
 	if err != nil {
 		panic(err)
@@ -101,7 +105,7 @@ func newClient(config *ClientConfig) *Client {
 		baseUrl:    apiUrl,
 		apiVersion: apiVersion,
 		Token:      config.APIToken,
-		userAgent:  defaultUserAgent,
+		userAgent:  userAgent,
 	}
 
 	c.Account = AccountService{apiClient: c}
@@ -140,12 +144,20 @@ func (c *Client) request(method string, urlStr string, opt interface{}, response
 	defer res.Body.Close()
 
 	if res.StatusCode != http.StatusOK {
-		return err
+		return APIError{
+			StatusCode: res.StatusCode,
+			Message:    fmt.Sprintf("HTTP response with status code %d", res.StatusCode),
+		}
 	}
 
 	var apiResp map[string]interface{}
 
-	_, err = c.decodeAPIResponse(res.Body, &apiResp)
+	bodyByte, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
+
+	err = c.decodeAPIResponse(bodyByte, &apiResp)
 	if err != nil {
 		return err
 	}
@@ -159,14 +171,9 @@ func (c *Client) request(method string, urlStr string, opt interface{}, response
 			return err
 		}
 
-		_, err = c.decodeAPIResponse(res.Body, &apiErrResp)
-		if err != nil {
-			return err
-		}
+		apiErrResp.Error.StatusCode = res.StatusCode
 
-		var apiErrResp2 ErrorResponse
-
-		return &apiErrResp2.Error
+		return &apiErrResp.Error
 	}
 
 	err = createFromMap(apiResp, &responseModel)
@@ -175,20 +182,16 @@ func (c *Client) request(method string, urlStr string, opt interface{}, response
 }
 
 // decodeAPIResponse decode response
-func (c *Client) decodeAPIResponse(responseBody io.Reader, resp interface{}) (_ io.Reader, err error) {
-	data, err := ioutil.ReadAll(responseBody)
+func (c *Client) decodeAPIResponse(responseBody []byte, resp interface{}) (err error) {
+	err = json.Unmarshal(responseBody, resp)
 	if err != nil {
 		return
 	}
 
-	err = json.Unmarshal(data, resp)
-	if err != nil {
-		return
-	}
-
-	return responseBody, nil
+	return nil
 }
 
+// createFromMap create json from map
 func createFromMap(m map[string]interface{}, result interface{}) error {
 	data, _ := json.Marshal(m)
 	err := json.Unmarshal(data, &result)
