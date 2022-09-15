@@ -105,13 +105,15 @@ type AlertContactMonitor struct {
 }
 
 type Monitor struct {
-	Id              int                    `json:"id"`
-	FriendlyName    string                 `json:"friendly_name"`
-	Url             string                 `json:"url"`
-	Type            int                    `json:"type"`
-	SubType         string                 `json:"sub_type"`
-	Port            int                    `json:"port"`
-	KeywordType     *int                   `json:"keyword_type"`
+	Id           int    `json:"id"`
+	FriendlyName string `json:"friendly_name"`
+	Url          string `json:"url"`
+	Type         int    `json:"type"`
+	// sub_type, port and keyword_type are returned as either an integer or an empty string,
+	// which Go doesn't allow: https://github.com/golang/go/issues/22182
+	SubType         interface{}            `json:"sub_type"`
+	Port            interface{}            `json:"port"`
+	KeywordType     interface{}            `json:"keyword_type"`
 	KeywordCaseType *int                   `json:"keyword_case_type"`
 	KeywordValue    string                 `json:"keyword_value"`
 	HttpUsername    string                 `json:"http_username"`
