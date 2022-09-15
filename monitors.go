@@ -110,7 +110,7 @@ type Monitor struct {
 	Url             string                 `json:"url"`
 	Type            int                    `json:"type"`
 	SubType         string                 `json:"sub_type"`
-	Port            string                 `json:"port"`
+	Port            int                    `json:"port"`
 	KeywordType     *int                   `json:"keyword_type"`
 	KeywordCaseType *int                   `json:"keyword_case_type"`
 	KeywordValue    string                 `json:"keyword_value"`
