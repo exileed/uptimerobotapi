@@ -68,7 +68,7 @@ type MWindow struct {
 	User         int    `json:"user"`
 	Type         int    `json:"type"`
 	FriendlyName string `json:"friendly_name"`
-	StartTime    int    `json:"start_time"`
+	StartTime    string `json:"start_time"`
 	Duration     int    `json:"duration"`
 	Value        string `json:"value"`
 	Status       int    `json:"status"`
