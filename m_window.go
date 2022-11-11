@@ -14,7 +14,8 @@ type GetMWindowParams struct {
 	Value        string `url:"value"`
 	StartTime    string `url:"start_time"`
 	Duration     string `url:"duration"`
-	Offset       int    `url:"offset,omitempty"`
+	Offset        int   `url:"offset,omitempty"`
+	Limit        *int   `url:"limit,omitempty"`
 }
 
 type NewMWindowParams struct {
