@@ -14,6 +14,8 @@ type GetMWindowParams struct {
 	Value        string `url:"value"`
 	StartTime    string `url:"start_time"`
 	Duration     string `url:"duration"`
+	Offset        int   `url:"offset,omitempty"`
+	Limit        *int   `url:"limit,omitempty"`
 }
 
 type NewMWindowParams struct {
@@ -68,10 +70,11 @@ type MWindow struct {
 	User         int    `json:"user"`
 	Type         int    `json:"type"`
 	FriendlyName string `json:"friendly_name"`
-	StartTime    int    `json:"start_time"`
-	Duration     int    `json:"duration"`
-	Value        string `json:"value"`
-	Status       int    `json:"status"`
+	// StartTime comes from API as a string value with a format like “18:20.”
+	StartTime string `json:"start_time"`
+	Duration  int    `json:"duration"`
+	Value     string `json:"value"`
+	Status    int    `json:"status"`
 }
 
 // GetMWindows Get https://uptimerobot.com/#getMWindows

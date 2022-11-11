@@ -43,7 +43,7 @@ func TestGetMWindows(t *testing.T) {
 
 	require.NoError(t, err)
 
-	mwindows := []MWindow{{Id: 111, User: 1, Type: 1, FriendlyName: "Once Backup", StartTime: 1461024000, Duration: 12, Value: "", Status: 1}}
+	mwindows := []MWindow{{Id: 111, User: 1, Type: 1, FriendlyName: "Once Backup", StartTime: "18:20", Duration: 12, Value: "", Status: 1}}
 
 	want := &MWindowsResp{Stat: StatOk, Pagination: Pagination{Total: 1, Limit: 10, Offset: 0}, MWindows: mwindows}
 
